@@ -1,0 +1,266 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Avatar is what you need!</title>
+
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'url_image/images/ apple-touch-icon.png' %}">
+        <link href="{% static 'url_image/images/favicon-16x16.png' %}" rel="icon" type="image/png"  sizes="16x16">
+        <link href="{% static 'url_image/images/favicon-32x32.png' %}" rel="icon" type="image/png" sizes="32x32">
+
+        <style>
+            html, body {
+            min-height: 100%;
+            }
+            body, form, input, select, textarea, p { 
+            padding: 0;
+            margin: 0;
+            outline: none;
+            font-family: Roboto, Arial, sans-serif;
+            font-size: 15px;
+            color: #1E90FF;
+            line-height: 25px;
+            }
+            h1 {
+            position: absolute;
+            margin: 0;
+            font-size: 39px;
+            color: #fff;
+            z-index: 2;
+            }
+            .testbox {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: inherit;
+            padding: 20px;
+            background: #1E90FF;
+            }
+            form {
+            font-size:16pt;
+            width: 100%;
+            padding: 20px;
+            border-radius: 6px;
+            background: #E0FFFF;
+            box-shadow: 0 0 30px 0 #0040FF; 
+            /*background-color: #58FAF4;*/
+            }
+            input[type="text"], textarea {
+
+              background-color : #58FAF4; 
+
+            }
+            .banner {
+            font-size:25pt;
+            position: relative;
+            height: 210px;
+            background-image: url("");    
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            }
+            .banner::after {
+            content: "";
+            background-color: #1E90FF; 
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            }
+
+            input, select, textarea {
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            }
+            input {
+            width: calc(100% - 10px);
+            padding: 5px;
+            }
+            select {
+            width: 100%;
+            padding: 7px 0;
+            background: transparent;
+            }
+            textarea {
+            width: calc(100% - 12px);
+            padding: 5px;
+            }
+            .btn-block {
+            margin-top: 10px;
+            text-align: center;
+            }
+            button {
+            width: 150px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px; 
+            background: #1E90FF;
+            font-size: 16px;
+            color: #fff;
+            cursor: pointer;
+            }
+
+            *{ 
+            -webkit-box-sizing: border-box; 
+            box-sizing: border-box; 
+            } 
+            img { 
+            display: block; /* Take the whole available width */ 
+            /*max-width: 100%;    */
+            max-height: 100%;   
+            width: 100%;
+            } 
+            .raw_container { 
+            width: 50%;
+            min-height: 30px; 
+            float: left; /* To allow multiple blocks align together in a row */ 
+            } 
+            .alert {
+              padding: 20px;
+              background-color: #f44336; /* Red */
+              margin-bottom: 15px;
+              text-align: center;
+            }
+            .name{
+              /*color:white;*/
+              width: 100%;
+              padding: 20px;
+              background-color: #1E90FF;
+              /*margin-bottom: 15px;*/
+              text-align: center;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="banner">
+            <h1>Merge your portret with a nice background!</h1>
+        </div>
+
+        <div class="testbox">
+            <form action="/" method="post">
+                {% csrf_token %}
+
+                {{ form }}
+
+                <div class="btn-block">
+                    <button type="submit" href="/">Merge</button>
+                </div>
+            </form>
+        </div>
+
+        {% if new_imgs %}
+
+         <div class = "raw_container">
+          <div class = "name">
+            <p style="color: white; font-size: 25px;text-align: center;">Background</p> 
+          </div>
+        </div>
+
+        <div class = "raw_container">
+            <div class = "name">
+              <p style="color: white; font-size: 25px;text-align: center;">Awesome avatar</p> 
+            </div>
+        </div>
+
+          <div class = "raw_container"> 
+              <img src="data:image/png;base64,{{ style64 }}">
+          </div> 
+
+          <div class = "raw_container"> 
+              <img src="data:image/png;base64,{{ result64 }}">
+          </div>
+
+
+        <div class = "raw_container">
+          <div class = "name">
+            <p style="color: white; font-size: 25px;text-align: center;">Portret</p> 
+          </div>
+        </div>
+
+        <div class = "raw_container">
+            <div class = "name">
+              <p style="color: white; font-size: 25px;text-align: center;">Mask</p> 
+            </div>
+        </div>
+
+          <div class = "raw_container"> 
+              <img src="data:image/png;base64,{{ portret64 }}">
+          </div> 
+
+          <div class = "raw_container"> 
+              <img src="data:image/png;base64,{{ mask64 }}">
+          </div>
+
+
+        {% endif %}
+
+        {% if portret_err %}
+          <div class="alert">
+            <p style="color: black; font-size: 25px;">Can't download portret image!</p>
+          </div>
+        {% endif %}
+
+        {% if style_err %}
+          <div class="alert">
+            <p style="color: black; font-size: 25px;">Can't download background image!</p>
+          </div> 
+
+        {% endif %}
+
+        {% if load_static_examples %}
+        <!-- <br> -->
+        <!-- <hr align="center" width=100% size="10" color="#fff" /> -->
+        
+         <div class = "raw_container">
+          <div class = "name">
+            <p style="color: white; font-size: 25px;text-align: center;">Example of background</p> 
+          </div>
+        </div>
+
+        <div class = "raw_container">
+            <div class = "name">
+              <p style="color: white; font-size: 25px;text-align: center;">Example of avatar</p> 
+            </div>
+        </div>
+
+          <div class = "raw_container"> 
+              <img src="{% static 'url_image/images/background.png' %}">
+          </div> 
+ 
+          <div class = "raw_container"> 
+              <img src="{% static 'url_image/images/result.png' %}">
+          </div>
+
+        <div class = "raw_container">
+          <div class = "name">
+            <p style="color: white; font-size: 25px;text-align: center;">Example of portret</p> 
+          </div>
+        </div>
+
+        <div class = "raw_container">
+            <div class = "name">
+              <p style="color: white; font-size: 25px;text-align: center;">Example of mask</p> 
+            </div>
+        </div>
+
+          <div class = "raw_container"> 
+              <img src="{% static 'url_image/images/portret.png' %}">
+          </div> 
+
+
+          <div class = "raw_container"> 
+              <img src="{% static 'url_image/images/mask.png' %}">
+          </div>
+          
+        {% endif %}
+
+    </body>
+
+</html>
