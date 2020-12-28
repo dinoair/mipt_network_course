@@ -48,12 +48,17 @@ def index(request):
                 # stylized64 = sty.get_stylized_portret(style, portret, mask)
                 context = {'form': form, 'portret64': portret64, "style64": style64,\
                 "mask64": mask64, "new_imgs": True, "load_static_examples": False,\
-                "portret_err": False, "style_err": False, "result64": result64}
+                "portret_err": False, "style_err": False, "result64": result64,\
+                "not_valid_form": False}
                 return render(request, 'url_image/index.html', context)
             else:
                 context = {'form': form, "portret_err": portret_err, "style_err": style_err,\
-                "load_static_examples": False, "new_imgs": False}
+                "load_static_examples": False, "new_imgs": False, "not_valid_form": False}
                 return render(request, 'url_image/index.html', context)
+        else:
+            context = {'form': form, "portret_err": False, "style_err": False, \
+            "load_static_examples": False, "new_imgs": False, "not_valid_form": True}
+            return render(request, 'url_image/index.html', context)
 
             # if portret_err and not style_err:
             #     response_form = UrlsForm(initial={'portret_url': "",\
@@ -81,7 +86,7 @@ def index(request):
                         "style_url": default_style_url})
         # stylized64 = sty.get_stylized_portret(style, portret, mask)
         context = {'form': form, "load_static_examples": True, "new_imgs": False,\
-        "portret_err": False, "style_err": False}
+        "portret_err": False, "style_err": False, "not_valid_form": False}
 
         return render(request, 'url_image/index.html', context)
 

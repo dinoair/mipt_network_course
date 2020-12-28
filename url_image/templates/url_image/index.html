@@ -8,7 +8,7 @@
         <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
-        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'url_image/images/ apple-touch-icon.png' %}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'url_image/images/apple-touch-icon.png' %}">
         <link href="{% static 'url_image/images/favicon-16x16.png' %}" rel="icon" type="image/png"  sizes="16x16">
         <link href="{% static 'url_image/images/favicon-32x32.png' %}" rel="icon" type="image/png" sizes="32x32">
 
@@ -211,7 +211,12 @@
           <div class="alert">
             <p style="color: black; font-size: 25px;">Can't download background image!</p>
           </div> 
+        {% endif %}
 
+        {% if not_valid_form %}
+          <div class="alert">
+            <p style="color: black; font-size: 25px;">At least one of the inserted urls is not valid!</p>
+          </div> 
         {% endif %}
 
         {% if load_static_examples %}
