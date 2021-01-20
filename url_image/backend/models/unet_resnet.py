@@ -1,7 +1,3 @@
-"""
-Made by @nizhib
-"""
-
 from torch import nn
 from torchvision.models.utils import load_state_dict_from_url
 
