@@ -16,20 +16,20 @@
             html, body {
             min-height: 100%;
             }
-            body, form, input, select, textarea, p { 
+            body, form, input, select, textarea, p {
             padding: 0;
             margin: 0;
             outline: none;
-            font-family: Roboto, Arial, sans-serif;
+            font-family: Times, Arial, sans-serif;
             font-size: 15px;
-            color: #1E90FF;
+            color: #000000;
             line-height: 25px;
             }
             h1 {
             position: absolute;
             margin: 0;
             font-size: 39px;
-            color: #fff;
+            color: #6600ff;
             z-index: 2;
             }
             .testbox {
@@ -38,27 +38,27 @@
             align-items: center;
             height: inherit;
             padding: 20px;
-            background: #1E90FF;
+            background: #000000;
             }
             form {
             font-size:16pt;
             width: 100%;
-            padding: 20px;
+            padding: 10px;
             border-radius: 6px;
-            background: #E0FFFF;
-            box-shadow: 0 0 30px 0 #0040FF; 
+            background: #ffffff;
+            /*box-shadow: 0 0 30px 0 #ffffff; */
             /*background-color: #58FAF4;*/
             }
             input[type="text"], textarea {
 
-              background-color : #58FAF4; 
+              background-color : #58FAF4;
 
             }
             .banner {
             font-size:25pt;
             position: relative;
             height: 210px;
-            background-image: url("");    
+            background-image: url("");
             background-size: cover;
             display: flex;
             justify-content: center;
@@ -67,7 +67,7 @@
             }
             .banner::after {
             content: "";
-            background-color: #1E90FF; 
+            background-color: #000000;
             position: absolute;
             width: 100%;
             height: 100%;
@@ -99,31 +99,31 @@
             width: 150px;
             padding: 10px;
             border: none;
-            border-radius: 5px; 
-            background: #1E90FF;
+            border-radius: 5px;
+            background: #000000;
             font-size: 16px;
             color: #fff;
             cursor: pointer;
             }
 
-            *{ 
-            -webkit-box-sizing: border-box; 
-            box-sizing: border-box; 
-            } 
-            img { 
-            display: block; /* Take the whole available width */ 
+            *{
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            }
+            img {
+            display: block; /* Take the whole available width */
             /*max-width: 100%;    */
-            max-height: 100%;   
+            max-height: 100%;
             width: 100%;
-            } 
-            .raw_container { 
+            }
+            .raw_container {
             width: 50%;
-            min-height: 30px; 
-            float: left; /* To allow multiple blocks align together in a row */ 
-            } 
+            min-height: 30px;
+            float: left; /* To allow multiple blocks align together in a row */
+            }
             .alert {
               padding: 20px;
-              background-color: #f44336; /* Red */
+              background-color: #000000; /* Red */
               margin-bottom: 15px;
               text-align: center;
             }
@@ -131,7 +131,7 @@
               /*color:white;*/
               width: 100%;
               padding: 20px;
-              background-color: #1E90FF;
+              background-color: #000000;
               /*margin-bottom: 15px;*/
               text-align: center;
             }
@@ -140,7 +140,7 @@
 
     <body>
         <div class="banner">
-            <h1>Merge your portret with a nice background!</h1>
+            <h1>Merge your portrait with a nice background</h1>
         </div>
 
         <div class="testbox">
@@ -159,42 +159,42 @@
 
          <div class = "raw_container">
           <div class = "name">
-            <p style="color: white; font-size: 25px;text-align: center;">Background</p> 
+            <p style="color: white; font-size: 25px;text-align: center;">Background</p>
           </div>
         </div>
 
         <div class = "raw_container">
             <div class = "name">
-              <p style="color: white; font-size: 25px;text-align: center;">Awesome avatar</p> 
+              <p style="color: white; font-size: 25px;text-align: center;">Awesome avatar</p>
             </div>
         </div>
 
-          <div class = "raw_container"> 
+          <div class = "raw_container">
               <img src="data:image/png;base64,{{ style64 }}">
-          </div> 
+          </div>
 
-          <div class = "raw_container"> 
+          <div class = "raw_container">
               <img src="data:image/png;base64,{{ result64 }}">
           </div>
 
 
         <div class = "raw_container">
           <div class = "name">
-            <p style="color: white; font-size: 25px;text-align: center;">Portret</p> 
+            <p style="color: white; font-size: 25px;text-align: center;">Portrait</p>
           </div>
         </div>
 
         <div class = "raw_container">
             <div class = "name">
-              <p style="color: white; font-size: 25px;text-align: center;">Mask</p> 
+              <p style="color: white; font-size: 25px;text-align: center;">Mask</p>
             </div>
         </div>
 
-          <div class = "raw_container"> 
+          <div class = "raw_container">
               <img src="data:image/png;base64,{{ portret64 }}">
-          </div> 
+          </div>
 
-          <div class = "raw_container"> 
+          <div class = "raw_container">
               <img src="data:image/png;base64,{{ mask64 }}">
           </div>
 
@@ -210,57 +210,57 @@
         {% if style_err %}
           <div class="alert">
             <p style="color: black; font-size: 25px;">Can't download background image!</p>
-          </div> 
+          </div>
         {% endif %}
 
         {% if not_valid_form %}
           <div class="alert">
             <p style="color: black; font-size: 25px;">At least one of the inserted urls is not valid!</p>
-          </div> 
+          </div>
         {% endif %}
 
         {% if load_static_examples %}
-        <!-- <br> -->
-        <!-- <hr align="center" width=100% size="10" color="#fff" /> -->
+         <br>
+         <hr align="center" width=100% size="10" color="#fff" />
         
          <div class = "raw_container">
           <div class = "name">
-            <p style="color: white; font-size: 25px;text-align: center;">Example of background</p> 
+            <p style="color: white; font-size: 25px;text-align: center;">Example of background</p>
           </div>
         </div>
 
         <div class = "raw_container">
             <div class = "name">
-              <p style="color: white; font-size: 25px;text-align: center;">Example of avatar</p> 
+              <p style="color: white; font-size: 25px;text-align: center;">Example of avatar</p>
             </div>
         </div>
 
-          <div class = "raw_container"> 
+          <div class = "raw_container">
               <img src="{% static 'url_image/images/background.png' %}">
-          </div> 
+          </div>
  
-          <div class = "raw_container"> 
+          <div class = "raw_container">
               <img src="{% static 'url_image/images/result.png' %}">
           </div>
 
         <div class = "raw_container">
           <div class = "name">
-            <p style="color: white; font-size: 25px;text-align: center;">Example of portret</p> 
+            <p style="color: white; font-size: 25px;text-align: center;">Example of portret</p>
           </div>
         </div>
 
         <div class = "raw_container">
             <div class = "name">
-              <p style="color: white; font-size: 25px;text-align: center;">Example of mask</p> 
+              <p style="color: white; font-size: 25px;text-align: center;">Example of mask</p>
             </div>
         </div>
 
-          <div class = "raw_container"> 
+          <div class = "raw_container">
               <img src="{% static 'url_image/images/portret.png' %}">
-          </div> 
+          </div>
 
 
-          <div class = "raw_container"> 
+          <div class = "raw_container">
               <img src="{% static 'url_image/images/mask.png' %}">
           </div>
           
