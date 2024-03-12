@@ -140,7 +140,7 @@
 
     <body>
         <div class="banner">
-            <h1>Merge your portrait with a nice background</h1>
+            <h1>Merge your portrait with a nice background!</h1>
         </div>
 
         <div class="testbox">
@@ -190,9 +190,9 @@
             </div>
         </div>
 
-          <div class = "raw_container">
-              <img src="data:image/png;base64,{{ portret64 }}">
-          </div>
+          <div class = "raw_container"> 
+              <img src="data:image/png;base64,{{ portrait64 }}">
+          </div> 
 
           <div class = "raw_container">
               <img src="data:image/png;base64,{{ mask64 }}">
@@ -201,9 +201,9 @@
 
         {% endif %}
 
-        {% if portret_err %}
+        {% if portrait_err %}
           <div class="alert">
-            <p style="color: black; font-size: 25px;">Can't download portret image!</p>
+            <p style="color: black; font-size: 25px;">Can't download portrait image!</p>
           </div>
         {% endif %}
 
@@ -245,7 +245,7 @@
 
         <div class = "raw_container">
           <div class = "name">
-            <p style="color: white; font-size: 25px;text-align: center;">Example of portret</p>
+            <p style="color: white; font-size: 25px;text-align: center;">Example of portrait</p>
           </div>
         </div>
 
@@ -255,9 +255,9 @@
             </div>
         </div>
 
-          <div class = "raw_container">
-              <img src="{% static 'url_image/images/portret.png' %}">
-          </div>
+          <div class = "raw_container"> 
+              <img src="{% static 'url_image/images/portrait.png' %}">
+          </div> 
 
 
           <div class = "raw_container">

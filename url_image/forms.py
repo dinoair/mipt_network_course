@@ -4,5 +4,5 @@ from django import forms
 # default_style_url = "https://sun9-55.userapi.com/impf/609j0tXE1iWvWJlB5RpSCqJFJ6RBsAe3KSKliw/UtaQaieYybg.jpg?size=447x604&quality=96&proxy=1&sign=383fd7a71fe1be901eba4c190b20e5b3"
 
 class UrlsForm(forms.Form):
-    portret_url = forms.URLField(label='Portret Url')
+    portrait_url = forms.URLField(label='Portrait Url')
     style_url = forms.URLField(label='Background Url')

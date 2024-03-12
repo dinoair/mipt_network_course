@@ -14,63 +14,80 @@ import torch.nn.functional as F
 from torch import optim
 import torch
 from torchvision import transforms
+import numpy as np
+from PIL import Image
+
+import torch
+import torchvision.transforms.functional as F
 
 from .models import unet_resnext50
 
-def sanitize(state_dict):
-    cpu = torch.device('cpu')
-    sanitized = dict()
-    for key in state_dict:
-        if key.startswith('module.'):
-            sanitized[key[7:]] = state_dict[key].to(cpu)
-        else:
-            sanitized[key] = state_dict[key].to(cpu)
-    return sanitized
 
+class Segmentator:
+    size = (320, 320)
+    step = 32
+    mean = [0.485, 0.456, 0.406]
+    std = [0.229, 0.224, 0.225]
 
-def load_state(path):
-    state = torch.load(path, map_location='cpu')
-    if 'state_dict' in state:
-        state = state['state_dict']
-    state = sanitize(state)
-    return state
-
-
-class Segmentator(object):
-    size = (320, 240)
-
-    meanstd = {
-        'mean': [0.485, 0.456, 0.406],
-        'std': [0.229, 0.224, 0.225]
-    }
-    normalize = transforms.Normalize(**meanstd)
-    preprocess = transforms.Compose([
-        transforms.Resize(size),
-        transforms.Pad((8, 0), padding_mode='reflect'),
-        transforms.ToTensor(),
-        normalize
-    ])
-
-    def __init__(self):
+    def __init__(self, step: int = 32) -> None:
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.net = unet_resnext50(num_classes=1, pretrained=True)
-        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.net.eval()
+        self.net.to(self.device)
 
-    @torch.no_grad()
-    def predict(self, image):
-        image = self.preprocess(image)
-        tensor = torch.stack((image,)).to(self.device)
-        logits = self.net(tensor)
-        probs = torch.sigmoid(logits).data[0, 0, :, 8:-8].to('cpu').numpy()
+        self.step = step
+        self.pt = 0
+        self.pr = 0
+        self.pb = 0
+        self.pl = 0
+
+    def preprocess(self, image: Image.Image) -> torch.Tensor:
+        image.thumbnail(self.size)
+
+        tensor = F.to_tensor(image)
+
+        h, w = tensor.shape[-2:]
+        self.pl = (w % self.step + 1) // 2
+        self.pt = (h % self.step) // 2
+        self.pr = (w % self.step) // 2
+        self.pb = (h % self.step + 1) // 2
+        tensor = F.pad(
+            tensor, [self.pl, self.pt, self.pr, self.pb], padding_mode="reflect"
+        )
+
+        tensor = F.normalize(tensor, self.mean, self.std)
+        tensor = tensor.to(self.device)
+
+        batch = torch.stack([tensor])
+
+        return batch
+
+    def postprocess(self, logits: torch.Tensor) -> np.ndarray:
+        logits = torch.squeeze(logits)
+
+        h, w = logits.shape
+        logits = logits[self.pt : h - self.pb, self.pl : w - self.pr]
+
+        probs = torch.sigmoid(logits)
+        probs = probs.to("cpu")
+        probs = probs.numpy()
+
         return probs
 
+    @torch.no_grad()
+    def predict(self, image: Image.Image) -> np.ndarray:
+        batch = self.preprocess(image)
+        logits = self.net(batch)
+        probs = self.postprocess(logits)
+        return probs
 
 
 def get_img_and_base64(url):
     """
     returns image in base64 format (a string)
-    that can be passed to html as context and rendered without saving to drive
+    that can be passed to html as contex§t and rendered without saving to drive
     """
-    blob = io.BytesIO( requests.get(url).content )
+    blob = io.BytesIO(requests.get(url).content)
     img = Image.open(blob).convert('RGB')
     img_np = np.array(img).astype(np.uint8)
     fmem = io.BytesIO()
@@ -78,7 +95,7 @@ def get_img_and_base64(url):
     fmem.seek(0)
     img64 = base64.b64encode(fmem.read()).decode('utf-8')
     return (img, img64)
- 
+
 
 def get_person_mask_and_mask64(img):
     # LOGGING_LEVEL = 'INFO'
@@ -108,12 +125,12 @@ def merge_style_and_person(mask, person, background):
     person_w, person_h = mask.size
 
     if float(back_w) / float(back_h) > float(person_w) / float(person_h):
-        resized_person = person.resize( (int(back_h * float(person_w) / float(person_h)), back_h), PIL.Image.BILINEAR)
-        resized_mask = mask.resize( (int(back_h * float(person_w) / float(person_h)), back_h), PIL.Image.BILINEAR)
+        resized_person = person.resize((int(back_h * float(person_w) / float(person_h)), back_h), PIL.Image.BILINEAR)
+        resized_mask = mask.resize((int(back_h * float(person_w) / float(person_h)), back_h), PIL.Image.BILINEAR)
 
     else:
-        resized_person = person.resize( (back_w, int(float(person_h) / float(person_w) * back_w)), PIL.Image.BILINEAR)
-        resized_mask = mask.resize( (back_w, int(float(person_h) / float(person_w) * back_w)), PIL.Image.BILINEAR)
+        resized_person = person.resize((back_w, int(float(person_h) / float(person_w) * back_w)), PIL.Image.BILINEAR)
+        resized_mask = mask.resize((back_w, int(float(person_h) / float(person_w) * back_w)), PIL.Image.BILINEAR)
 
     # print("resized_mask.size", resized_mask.size)
     # print("resized_person.size", resized_person.size)
@@ -127,31 +144,28 @@ def merge_style_and_person(mask, person, background):
 
     p_w, p_h = resized_person.size
 
-    patch_under_person = back_np[back_h // 2 - p_h // 2 : back_h // 2 + p_h // 2 + p_h % 2, \
-    back_w // 2 - p_w // 2 : back_w // 2 + p_w // 2 + p_w % 2, :]
+    patch_under_person = back_np[back_h // 2 - p_h // 2: back_h // 2 + p_h // 2 + p_h % 2, \
+                         back_w // 2 - p_w // 2: back_w // 2 + p_w // 2 + p_w % 2, :]
 
     # print("patch_under_person.shape", patch_under_person.shape)
 
-    red = np.where(mask_np > threshold_for_mask, person_np[:,:,0], patch_under_person[:,:,0])
-    green = np.where(mask_np > threshold_for_mask, person_np[:,:,1], patch_under_person[:,:,1])
-    blue = np.where(mask_np > threshold_for_mask, person_np[:,:,2], patch_under_person[:,:,2])
+    red = np.where(mask_np > threshold_for_mask, person_np[:, :, 0], patch_under_person[:, :, 0])
+    green = np.where(mask_np > threshold_for_mask, person_np[:, :, 1], patch_under_person[:, :, 1])
+    blue = np.where(mask_np > threshold_for_mask, person_np[:, :, 2], patch_under_person[:, :, 2])
 
     # print("red.shape", red.shape)
     # print("regreend.shape", green.shape)
     # print("blue.shape", blue.shape)
 
-    patch_under_person[:,:,0] = red
-    patch_under_person[:,:,1] = green
-    patch_under_person[:,:,2] = blue
+    patch_under_person[:, :, 0] = red
+    patch_under_person[:, :, 1] = green
+    patch_under_person[:, :, 2] = blue
 
-    back_np[back_h // 2 - p_h // 2 : back_h // 2 + p_h // 2 + p_h % 2, \
-    back_w // 2 - p_w // 2 : back_w // 2 + p_w // 2 + p_w % 2, :] = patch_under_person
+    back_np[back_h // 2 - p_h // 2: back_h // 2 + p_h // 2 + p_h % 2, \
+    back_w // 2 - p_w // 2: back_w // 2 + p_w // 2 + p_w % 2, :] = patch_under_person
 
     fmem = io.BytesIO()
     imsave(fmem, back_np, 'png')
     fmem.seek(0)
     merged64 = base64.b64encode(fmem.read()).decode('utf-8')
     return merged64
-    # patch_under_person[:,:,0][mask_np > 0] = 0
-
-
